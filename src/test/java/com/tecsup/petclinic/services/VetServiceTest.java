@@ -10,6 +10,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+
 @SpringBootTest
 @Slf4j
 public class VetServiceTest {
@@ -50,5 +57,83 @@ public class VetServiceTest {
 
         assertEquals(savedVet.getId(), foundVet.getId());
         assertEquals("Luis", foundVet.getFirstName());
+    }
+
+    @Test
+    public void testDeactivateVet() {
+
+        Vet vet = new Vet(null, "Carlos", "Ramos", "carlos@example.com", "555-0104", true);
+
+        // ------------ Create ---------------
+
+        Vet newVet = this.vetService.create(vet);
+        log.info("VET CREATED :" + newVet);
+
+        // ------------ Deactivate ---------------
+
+        try {
+            this.vetService.deactivate(newVet.getId());
+        } catch (VetNotFoundException e) {
+            fail(e.getMessage());
+        }
+
+        // ------------ Validation ---------------
+
+        try {
+            Vet foundVet = this.vetService.findById(newVet.getId());
+            assertFalse(foundVet.isActive());   // sigue existiendo, pero inactivo
+        } catch (VetNotFoundException e) {
+            fail("El registro no debió borrarse");
+        }
+    }
+
+    /**
+     *
+     */
+    @Test
+    public void testReactivateVet() {
+
+        Vet vet = new Vet(null, "Rosa", "Mendez", "rosa@example.com", "555-0105", false);
+
+        // ------------ Create ---------------
+
+        Vet newVet = this.vetService.create(vet);
+        log.info("VET CREATED :" + newVet);
+
+        // ------------ Reactivate ---------------
+
+        try {
+            this.vetService.reactivate(newVet.getId());
+        } catch (VetNotFoundException e) {
+            fail(e.getMessage());
+        }
+
+        // ------------ Validation ---------------
+
+        try {
+            Vet foundVet = this.vetService.findById(newVet.getId());
+            assertTrue(foundVet.isActive());
+        } catch (VetNotFoundException e) {
+            fail(e.getMessage());
+        }
+    }
+
+    /**
+     *
+     */
+    @Test
+    public void testFindActiveVets() {
+
+        int INACTIVE_VET_ID = 6;   // Sharon Jenkins (active = false en la data)
+
+        List<Vet> vets = this.vetService.findActive();
+        log.info("ACTIVE VETS :" + vets);
+
+        assertFalse(vets.isEmpty());
+
+        for (Vet v : vets) {
+            assertTrue(v.isActive());
+            assertNotEquals(INACTIVE_VET_ID, v.getId());
+        }
     }
 }
