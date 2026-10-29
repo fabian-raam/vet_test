@@ -17,4 +17,6 @@ public interface VetService {
     void reactivate(Integer id) throws VetNotFoundException;
 
     List<Vet> findActive();
+
+    List<Vet> findInactiveVets();
 }

@@ -49,5 +49,10 @@ public class VetServiceImpl implements VetService {
         return vetRepository.findByActiveTrue();
     }
 
+    @Override
+    public List<Vet> findInactiveVets() {
+        return vetRepository.findByActiveFalse();
+    }
+
 
 }
