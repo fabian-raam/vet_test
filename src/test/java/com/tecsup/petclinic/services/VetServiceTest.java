@@ -6,16 +6,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+
+import java.util.List;
 
 @SpringBootTest
 @Slf4j
@@ -136,4 +137,28 @@ public class VetServiceTest {
             assertNotEquals(INACTIVE_VET_ID, v.getId());
         }
     }
+
+    @Test
+    public void testFindVetById_NotFound() {
+        assertThrows(VetNotFoundException.class, () -> vetService.findById(Integer.MAX_VALUE));
+    }
+
+    @Test
+    public void testDeactivateVet_NotFound() {
+        assertThrows(VetNotFoundException.class, () -> vetService.deactivate(Integer.MAX_VALUE));
+    }
+
+    @Test
+    @Transactional
+    public void testFindInactiveVets() {
+        Vet inactiveVet = vetService.create(new Vet(null, "Carmen", "Rojas", "carmen@example.com", "555-0201", false));
+        Vet activeVet = vetService.create(new Vet(null, "Pedro", "Vega", "pedro@example.com", "555-0202", true));
+
+        List<Vet> inactiveVets = vetService.findInactiveVets();
+
+        assertTrue(inactiveVets.stream().anyMatch(vet -> vet.getId().equals(inactiveVet.getId())));
+        assertFalse(inactiveVets.stream().anyMatch(vet -> vet.getId().equals(activeVet.getId())));
+        assertTrue(inactiveVets.stream().noneMatch(Vet::isActive));
+    }
+
 }
