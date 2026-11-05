@@ -2,6 +2,7 @@ package com.tecsup.petclinic.util;
 
 import com.tecsup.petclinic.dtos.PetDTO;
 import com.tecsup.petclinic.entities.Pet;
+import com.tecsup.petclinic.entities.Vet;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,5 +80,28 @@ public class TObjectCreator {
 		pets.add(new Pet(12,"Lucky",2,10, null));
 		pets.add(new Pet(13,"Sly",1,10, null));
 		return pets;
+	}
+	// --- Métodos para Vet ---
+
+	public static Vet newVet() {
+		Vet newVet = new Vet();
+		newVet.setFirstName("John");
+		newVet.setLastName("Doe");
+		newVet.setEmail("john.doe@example.com");
+		newVet.setActive(true);
+		return newVet;
+	}
+
+	public static Vet newVetCreated() {
+		Vet vet = newVet();
+		vet.setId(1000); // ID simulado que devuelve la BD al hacer 'save'
+		return vet;
+	}
+
+	public static Vet newVetInactive() {
+		Vet vet = newVet();
+		vet.setId(6); // Usamos el ID 6 que suele ser el inactivo por defecto en los datos semilla
+		vet.setActive(false);
+		return vet;
 	}
 }
