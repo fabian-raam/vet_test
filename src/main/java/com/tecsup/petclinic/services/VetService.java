@@ -12,6 +12,10 @@ public interface VetService {
 
     Vet findById(Integer id) throws VetNotFoundException;
 
+    List<Vet> findAll();
+
+    void delete(Integer id) throws VetNotFoundException;
+
     void deactivate(Integer id) throws VetNotFoundException;
 
     void reactivate(Integer id) throws VetNotFoundException;

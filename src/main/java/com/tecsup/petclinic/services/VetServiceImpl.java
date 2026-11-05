@@ -31,6 +31,17 @@ public class VetServiceImpl implements VetService {
     }
 
     @Override
+    public List<Vet> findAll() {
+        return vetRepository.findAll();
+    }
+
+    @Override
+    public void delete(Integer id) throws VetNotFoundException {
+        findById(id);
+        vetRepository.deleteById(id);
+    }
+
+    @Override
     public void deactivate(Integer id) throws VetNotFoundException {
         Vet vet = findById(id);
         vet.setActive(false);
