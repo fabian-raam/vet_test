@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -25,10 +26,32 @@ public class VetControllerTest {
     private MockMvc mockMvc;
 
     @Test
+    public void testFindAllVets() throws Exception {
+        mockMvc.perform(get("/vets"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").isArray());
+    }
+
+    @Test
+    public void testFindVetOK() throws Exception {
+        mockMvc.perform(get("/vets/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.lastName").value("Carter"));
+    }
+
+    @Test
+    public void testFindVetKO() throws Exception {
+        mockMvc.perform(get("/vets/666"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     public void testFindActiveVets() throws Exception {
         mockMvc.perform(get("/vets").param("active", "true"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith("application/json"))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(5)))
                 .andExpect(jsonPath("$[*].active", everyItem(is(true))));
     }
@@ -37,7 +60,7 @@ public class VetControllerTest {
     public void testFindInactiveVets() throws Exception {
         mockMvc.perform(get("/vets").param("active", "false"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith("application/json"))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].id", is(6)))
                 .andExpect(jsonPath("$[0].active", is(false)));
