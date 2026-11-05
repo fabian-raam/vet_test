@@ -2,11 +2,25 @@ package com.tecsup.petclinic.util;
 
 import com.tecsup.petclinic.dtos.PetDTO;
 import com.tecsup.petclinic.entities.Pet;
+import com.tecsup.petclinic.entities.Vet;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class TObjectCreator {
+
+	public static List<Vet> getActiveVets() {
+		return List.of(
+				new Vet(1, "James", "Carter", "james.carter@petclinic.com", "6085551234", true),
+				new Vet(2, "Helen", "Leary", "helen.leary@petclinic.com", "6085552345", true),
+				new Vet(3, "Linda", "Douglas", "linda.douglas@petclinic.com", "6085553456", true),
+				new Vet(4, "Rafael", "Ortega", "rafael.ortega@petclinic.com", "6085554567", true),
+				new Vet(5, "Henry", "Stevens", "henry.stevens@petclinic.com", "6085555678", true));
+	}
+
+	public static List<Vet> getInactiveVets() {
+		return List.of(new Vet(6, "Sharon", "Jenkins", "sharon.jenkins@petclinic.com", "6085556789", false));
+	}
 
 	public static Pet getPet() {
 		return new Pet(1,"Leo",1,1, null);
